@@ -1,3 +1,4 @@
+src
 # Logs
 logs
 *.log
@@ -104,4 +105,3 @@ dist
 .tern-port
 .svelte-kit
 
-src/
