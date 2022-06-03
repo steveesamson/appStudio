@@ -8,10 +8,11 @@ const config = {
   preprocess: sveltePreprocess({
     less: true,
   }),
-  outDir: "docs",
+  // outDir: "docs",
   kit: {
     adapter: adapter({
       // default options are shown
+      out: "docs",
       pages: "docs",
       assets: "docs",
       fallback: null,
