@@ -1,27 +1,21 @@
 <script>
-  import {onMount, createEventDispatcher, beforeUpdate} from 'svelte';
-  import NodeIcon from 'components/NodeIcon.svelte';
-  import NodePoint from 'components/NodePoint.svelte';
+  import { onMount, createEventDispatcher, beforeUpdate } from "svelte";
+  import NodeIcon from "components/NodeIcon.svelte";
+  import NodePoint from "components/NodePoint.svelte";
 
   export let data, save, canvasEl;
 
-  let el,
-  node,
-  nodeText,
-  nodeInput,
-  nodeOutput;
+  let el, node, nodeText, nodeInput, nodeOutput;
 
   let lastPoint, startDimension, operation, next;
-  
 
   const dispatch = createEventDispatcher();
-//   nexts = [],
-//   prevs = [];
+  //   nexts = [],
+  //   prevs = [];
 
-
-  const sendCanvasEvent = ( type, payload) =>{
+  const sendCanvasEvent = (type, payload) => {
     dispatch(type, payload || data);
-  }
+  };
   const updateConnectors = async () => {
     data.nexts.forEach((n) => {
       if (data.type !== "goback") {
@@ -31,10 +25,10 @@
         n.x1 = data.x + 10;
         n.y1 = data.y + 27;
       }
-    //   await save(n);
+      //   await save(n);
     });
 
-    data.prevs.forEach( (p) => {
+    data.prevs.forEach((p) => {
       if (data.type !== "goback") {
         p.x2 = data.x - 7;
         p.y2 = data.y + 27;
@@ -42,7 +36,7 @@
         p.x2 = data.x + data.width + 27;
         p.y2 = data.y + 27;
       }
-    //   await save(p);
+      //   await save(p);
     });
     // await save(data);
   };
@@ -64,14 +58,14 @@
     // this.setState((pr) => ({ tick: pr.tick + 1 }));
   };
 
- export const removeNext = async (nxt) => {
+  export const removeNext = async (nxt) => {
     if (nxt) {
       data.nexts.forEach((n, i) => {
         if (nxt.id == n.id) {
           data.nexts.splice(i, 1);
         }
       });
-       await save(data);
+      await save(data);
     }
   };
   const removePrev = async (prev) => {
@@ -81,7 +75,7 @@
           data.prevs.splice(i, 1);
         }
       });
-       await save(data);
+      await save(data);
     }
   };
   export const setNext = async (nxt) => {
@@ -113,24 +107,22 @@
         width: coords.width + 40,
       });
     }
-    data = {...data, ...delta};
+    data = { ...data, ...delta };
     updateConnectors();
   };
 
-
-
   const bindEvents = () => {
-      el.addEventListener("mousedown", onMouseDown, false);
-      document.addEventListener(
-        "mousedown",
-        (e) => {
-          if (el && el.contains(e.target)) {
-            // canvas.isFocused(this);
-            sendCanvasEvent('focus');
-          }
-        },
-        false
-      );
+    el.addEventListener("mousedown", onMouseDown, false);
+    document.addEventListener(
+      "mousedown",
+      (e) => {
+        if (el && el.contains(e.target)) {
+          // canvas.isFocused(this);
+          sendCanvasEvent("focus");
+        }
+      },
+      false
+    );
 
     //   el.addEventListener(
     //     "dblclick",
@@ -153,8 +145,7 @@
   const onMouseDown = async (e) => {
     if (
       e.target == nodeOutput &&
-      (data.type !== "start" ||
-        (data.type === "start" && !data.nexts.length))
+      (data.type !== "start" || (data.type === "start" && !data.nexts.length))
     ) {
       operation = "onConnecting";
 
@@ -164,35 +155,35 @@
       // console.log('Compare: svgPoint el:\n ', lastPoint, ' getBox el:\n ', this.el.getBBox() , ' svgPoint process_out\n: ', svgPoint(this.processOutput,e));
       // console.log('Type: ', data.type);
       next = {
-          x1: lastPoint.x,
-          y1: lastPoint.y,
-          x2: lastPoint.x,
-          y2: lastPoint.y,
-          start: data.id,
-          type: "connector",
-          direction: data.type === "goback" ? "back" : "front",
-        };
-        dispatch('connect',next);
-        setNext(next);
-        // next = _data;
-        // setNext(_data);
+        x1: lastPoint.x,
+        y1: lastPoint.y,
+        x2: lastPoint.x,
+        y2: lastPoint.y,
+        start: data.id,
+        type: "connector",
+        direction: data.type === "goback" ? "back" : "front",
+      };
+      dispatch("connect", next);
+      setNext(next);
+      // next = _data;
+      // setNext(_data);
 
-    //   const _data = await save(
-    //     {
-    //       x1: lastPoint.x,
-    //       y1: lastPoint.y,
-    //       x2: lastPoint.x,
-    //       y2: lastPoint.y,
-    //       start: data.id,
-    //       type: "path",
-    //       direction: data.type === "goback" ? "back" : "front",
-    //     });
+      //   const _data = await save(
+      //     {
+      //       x1: lastPoint.x,
+      //       y1: lastPoint.y,
+      //       x2: lastPoint.x,
+      //       y2: lastPoint.y,
+      //       start: data.id,
+      //       type: "path",
+      //       direction: data.type === "goback" ? "back" : "front",
+      //     });
 
-    //     if(_data){
-    //         next = _data;
-    //         setNext(_data);
-    //         // await save({ id: _data.id, next: next });
-    //     }
+      //     if(_data){
+      //         next = _data;
+      //         setNext(_data);
+      //         // await save({ id: _data.id, next: next });
+      //     }
     } else {
       operation = "move";
       lastPoint = svgPoint(e);
@@ -231,17 +222,17 @@
           x = startDimension.x + xX,
           y = startDimension.y + xY;
 
-          data = {...data,x,y};
-          dispatch('move', data);
+        data = { ...data, x, y };
+        dispatch("move", data);
         //   await save({ id: data.id, x: x, y: y });
         //   await save(data);
-          updateConnectors(xX, xY);
+        updateConnectors(xX, xY);
         break;
       case "onConnecting":
         curPoint = svgPoint(e);
         next.x2 = curPoint.x;
         next.y2 = curPoint.y;
-        dispatch('connecting', next);
+        dispatch("connecting", next);
         // if (!next.name) {
         //   const { start, end } = next;
         //   next.name = `path-${start}-2-${end}`;
@@ -261,49 +252,44 @@
       case "onConnecting":
         next.task = data.id;
         next.targetAt = svgPoint(e);
-        dispatch('connected',{...next});
+        dispatch("connected", { ...next });
         next = null;
         return;
-
 
         // if (e.target.classList.contains("process-input")) {
         if (e.target.classList.contains("process-input")) {
           let to = e.target.parentNode.getAttribute("id");
 
-          next.end =  to;//parseInt(to, 10);
+          next.end = to; //parseInt(to, 10);
           next.task = data.id;
-          dispatch('connected',{...next});
+          dispatch("connected", { ...next });
           next = null;
 
+          //   let real = {},
+          //     copy = {};
+          //   Object.assign(real, next);
+          //   Object.assign(copy, next);
 
+          //   real.task = data.id;
 
+          //   delete real.id;
 
-        //   let real = {},
-        //     copy = {};
-        //   Object.assign(real, next);
-        //   Object.assign(copy, next);
-
-        //   real.task = data.id;
-          
-          
-        //   delete real.id;
-          
-        //   canvas.tasks.save(real, (e, m, data) => {
-        //     if (!e) {
-        //       canvas.remove(copy);
-        //       next = null;
-        //       setNext(data);
-        //       canvas.tasks.add(data);
-        //       canvas.setPrev(to, data);
-        //       let path = canvas.UIs[data.id];
-        //       if (path) {
-        //         path.setState(data);
-        //       }
-        //     }
-        //   });
+          //   canvas.tasks.save(real, (e, m, data) => {
+          //     if (!e) {
+          //       canvas.remove(copy);
+          //       next = null;
+          //       setNext(data);
+          //       canvas.tasks.add(data);
+          //       canvas.setPrev(to, data);
+          //       let path = canvas.UIs[data.id];
+          //       if (path) {
+          //         path.setState(data);
+          //       }
+          //     }
+          //   });
         } else {
-        //   canvas.remove(next);
-          sendCanvasEvent('remove', next);
+          //   canvas.remove(next);
+          sendCanvasEvent("remove", next);
           next = null;
         }
 
@@ -314,76 +300,78 @@
     operation = null;
   };
 
-  onMount(() =>{
+  onMount(() => {
     bindEvents();
     update({ name: data.name });
-  })
+  });
 
-  $:{
-    if(data.name && nodeText){
-        update({ name: data.name });
+  $: {
+    if (data.name && nodeText) {
+      update({ name: data.name });
+    }
   }
-}
-  
 </script>
+
+<g
+  id={data.id}
+  class="svgPaneCanvas"
+  transform={`translate(${data.x},${data.y})`}
+  bind:this={el}
+>
+  <rect
+    x="10"
+    y="0"
+    width={data.width}
+    height={data.height}
+    rx={data.radius}
+    class={`svgPane ${data.type}`}
+    bind:this={node}
+  />
+  <text
+    x={data.tx}
+    y={data.ty + 5}
+    class="svgPaneText"
+    bind:this={nodeText}
+    fill={["start", "end"].includes(data.type) ? "transparent" : "#eee"}
+  >
+    {data.text}
+  </text>
+
+  <NodePoint
+    type={data.type}
+    width={data.width}
+    bind:nodeInput
+    bind:nodeOutput
+  />
+  <NodeIcon type={data.type} width={data.width} />
+</g>
+
 <style lang="less">
+  // @colors.Green:#1fbf41;
+  // @colors.Purple:#9b59b6;
+  // @colors.Red:#e74c3c;
+  // @colors.Clouds:#ecf0f1;
 
-@Green:#1fbf41;
-@Purple:#9b59b6;
-@Red:#e74c3c;
-@Clouds:#ecf0f1;
+  .svgPaneCanvas {
+    color: .colors[Clouds];
+  }
+  // path{
+  //     z-index: 100;
+  // }
 
-.svgPaneCanvas{
-    color:@Clouds;
-}
-// path{
-//     z-index: 100;
-// }
-
-.svgPane{
-    fill:@Purple;
-    cursor:move;
-	overflow:visible;
-	&.start{
-		fill:@Green;
-	}
-	&.end{
-		fill:@Red;
-	}
-}
-.svgPaneText{
-    stroke:none;
-    cursor:move;
-}
-
-
+  .svgPane {
+    fill: .colors[Purple];
+    cursor: move;
+    overflow: visible;
+    &.start {
+      fill: .colors[Green];
+    }
+    &.end {
+      fill: .colors[Red];
+    }
+  }
+  .svgPaneText {
+    stroke: none;
+    cursor: move;
+  }
 </style>
- <g id={data.id}
-    class="svgPaneCanvas"
-    transform={`translate(${data.x},${data.y})`}
-    bind:this={el}>
-        <rect
-          x="10"
-          y="0"
-          width={data.width}
-          height={data.height}
-          rx={data.radius}
-          class={`svgPane ${data.type}`}
-          bind:this={node}
-        />
-        <text
-          x={data.tx}
-          y={data.ty + 5}
-          class="svgPaneText"
-          bind:this={nodeText}
-          fill={['start','end'].includes(data.type)
-              ?"transparent"
-              : "#eee"
-          }
-        >
-          {data.text}
-        </text>
-
-       <NodePoint type={data.type} width={data.width} bind:nodeInput bind:nodeOutput/>
-       <NodeIcon type={data.type} width={data.width}/>
-      </g>

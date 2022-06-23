@@ -6,13 +6,14 @@ const dev = process.env.NODE_ENV === "development";
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   preprocess: sveltePreprocess({
-    less: true,
+    less: {
+      prependData: "@import './src/mixms.less';",
+    },
   }),
-  // outDir: "docs",
   kit: {
     adapter: adapter({
       // default options are shown
-      out: "docs",
+      outDir: "docs",
       pages: "docs",
       assets: "docs",
       fallback: null,
